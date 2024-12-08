@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card Component</title>
+    <script src="./pokemon-card.js" defer></script>
+</head>
+<body>
+    <card-component type="Fire" theme="fire">
+        <div slot="title">Flaming Phoenix</div>
+        <div slot="stats">HP: 150</div>
+        <img slot="image" src="./src/assets/example.png" alt="Phoenix Image">
+        <div slot="description">
+            A mythical creature known for its fiery wings and incredible power.
+        </div>
+        <div slot="abilities">
+            <p><strong>Ability:</strong> Flame Burst - Deals 50 damage to all enemies.</p>
+        </div>
+        <div slot="footer">#001 Fire Type | 5'7" | 199 lbs</div>
+    </card-component>
+</body>
+</html>
