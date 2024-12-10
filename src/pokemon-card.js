@@ -10,7 +10,7 @@ class CardComponent extends HTMLElement {
                     width: 350px;
                     height: 500px;
                     background: var(--card-bg-color, #fff);
-                    border: 10px solid var(--border-color, #fcd12a); /* Yellow border */
+                    border: 10px solid var(--border-color, #fcd12a);
                     border-radius: 16px;
                     font-family: 'Arial', sans-serif;
                     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -81,22 +81,22 @@ class CardComponent extends HTMLElement {
         const template = `
             <div class="card">
                 <div class="card-header">
-                    <slot name="title">Card Title</slot>
-                    <slot name="stats"></slot>
+                    <span class="title">Card Title</span>
+                    <span class="stats">Stats Here</span>
                 </div>
                 <div class="card-body">
                     <div class="image-container">
-                        <slot name="image"></slot>
+                        <img src="" alt="Card Image" />
                     </div>
                     <div class="description">
-                        <slot name="description">Default card description.</slot>
+                        Default card description.
                     </div>
                     <div class="abilities">
-                        <slot name="abilities"></slot>
+                        Abilities go here.
                     </div>
                 </div>
                 <div class="footer">
-                    <slot name="footer">Footer text here.</slot>
+                    Footer text here.
                 </div>
             </div>
         `;
@@ -105,10 +105,15 @@ class CardComponent extends HTMLElement {
     }
 
     static get observedAttributes() {
-        return ['theme'];
+        return ['theme', 'title', 'stats', 'description', 'abilities', 'image', 'footer'];
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
+        const updateContent = (selector, content) => {
+            const element = this.shadowRoot.querySelector(selector);
+            if (element) element.textContent = content;
+        };
+
         if (name === 'theme') {
             const themes = {
                 fire: {
@@ -126,13 +131,41 @@ class CardComponent extends HTMLElement {
             Object.entries(theme).forEach(([key, value]) => {
                 this.style.setProperty(key, value);
             });
+        } else {
+            switch (name) {
+                case 'title':
+                    updateContent('.title', newValue);
+                    break;
+                case 'stats':
+                    updateContent('.stats', newValue);
+                    break;
+                case 'description':
+                    updateContent('.description', newValue);
+                    break;
+                case 'abilities':
+                    updateContent('.abilities', newValue);
+                    break;
+                case 'footer':
+                    updateContent('.footer', newValue);
+                    break;
+                case 'image':
+                    const img = this.shadowRoot.querySelector('.image-container img');
+                    if (img) img.src = newValue;
+                    break;
+            }
         }
     }
 
     connectedCallback() {
-        if (this.getAttribute('theme')) {
-            this.attributeChangedCallback('theme', null, this.getAttribute('theme'));
-        }
+        this.syncAttributes();
+    }
+
+    syncAttributes() {
+        this.constructor.observedAttributes.forEach(attr => {
+            if (this.hasAttribute(attr)) {
+                this.attributeChangedCallback(attr, null, this.getAttribute(attr));
+            }
+        });
     }
 }
 
